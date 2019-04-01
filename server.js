@@ -9,7 +9,7 @@ const UUID = require('uuid');
 //   database: 'node_study'
 // });
 // 开始连接
-connection.connect();
+// connection.connect();
 // 引入 http 模块：http 是提供 Web 服务的基础
 // const url = require("url");
 // const qs = require("querystring");
