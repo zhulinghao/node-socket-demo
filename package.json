@@ -1,0 +1,19 @@
+{
+  "name": "awsome_node_app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "moment": "^2.24.0",
+    "mysql": "^2.16.0",
+    "nodemon": "^1.18.10",
+    "socket.io": "^2.2.0",
+    "uuid": "^3.3.2"
+  }
+}

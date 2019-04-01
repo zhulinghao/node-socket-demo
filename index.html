@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <meta http-equiv="X-⌃-Compatible" content="ie=edge">
+  <title>socket</title>
+  <style>
+    * { margin: 0;padding: 0; }
+    html,body {
+      width: 100%;
+      height: 100%;
+    }
+    .user-item {
+      margin: 0 5px;
+    }
+    .list {
+      margin-top: 15px;
+    }
+    #app {
+      background: #333;
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    .join, .chat {
+      width: 400px;
+      border: 1px solid #fff;
+      padding: 20px;
+      min-height: 400px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+    }
+    .users {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="app">
+    <div class="join" v-if="!isLogin">
+      <input type="text" v-model="input" @keyup.enter="join"><button @click="join">加入</button>
+    </div>
+    <div class="chat" v-else>
+      <h2>{{currentName}}</h2>
+      <div class="users">在线用户: <span class="user-item" v-for="item in users" :key="item.id">{{item.uname}}</span></div>
+      <input type="text" v-model="chat" @keyup.enter="addChat">
+      <div class="list">
+        <div class="item" v-for="item in items" :key="item.id">
+          <strong>{{item.uname}}:</strong><span>{{item.content}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- cdn 引用：Vue 和 Node -->
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.dev.js"></script>
+  
+  <script>
+    const uri = 'http://192.168.1.220:12345';
+    const socket = io.connect(uri);
+    new Vue({
+      el: '#app',
+      data: function () {
+        return {
+          items: [],
+          users: [],
+          chat: '',
+          input: '',
+          currentName: '',
+          isLogin: false
+        }
+      },
+      mounted() {
+        socket.on('getList', (data) => {
+          this.items = data;
+        });
+        socket.on('getUser', (data) => {
+          this.users = data;
+        });
+        socket.on('message', (data) => {
+          console.log(data);
+        });
+      },
+      destory() {
+        socket.emit('signOut', this.currentName);
+      },
+      methods: {
+        addChat() {
+          let data = { content: this.chat, uname: this.currentName  };
+          this.chat = "";
+          socket.emit('addChat', data);
+        },
+        join() {
+          this.isLogin = true;
+          socket.emit('addUser', { uname: this.input });
+          this.currentName = this.input;
+          this.input = "";
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>
